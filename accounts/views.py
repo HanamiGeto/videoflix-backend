@@ -5,7 +5,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 import jwt
 from .models import CustomUser
-from .serializers import SignUpSerializer, EmailVerificationSerializer
+from .serializers import LoginSerializer, SignUpSerializer, EmailVerificationSerializer
 from .utils import Util
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -48,3 +48,13 @@ class VerifyEmailView(GenericAPIView):
             return Response({'error': 'Activation Expired'}, status=status.HTTP_400_BAD_REQUEST)
         except jwt.InvalidTokenError:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            user_data = serializer.validated_data
+            return Response(user_data, status=status.HTTP_200_OK)
+        print(serializer.errors)
