@@ -23,7 +23,7 @@ class SignUpView(GenericAPIView):
 
         current_site = get_current_site(request).domain
         relative_link = reverse('email-verify')
-        absurl = f'https://{current_site}{relative_link}?token={token}'
+        absurl = f'http://{current_site}{relative_link}?token={token}'
         email_body = f'Hi {user.username}, use the link below to verify your email \n{absurl}'
         email_data = {'email_body': email_body, 'to_email': user.email, 'email_subject': 'Verify your email'}
 
