@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'accounts',
-    'content',
+    'content.apps.ContentConfig',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
