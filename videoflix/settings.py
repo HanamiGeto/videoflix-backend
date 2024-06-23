@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'accounts',
     'content.apps.ContentConfig',
     'debug_toolbar',
+    'django_rq',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -78,6 +79,16 @@ MIDDLEWARE = [
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': 'foobared',
+        'DEFAULT_TIMEOUT': 360,
+    },
+}
 
 CACHES = {
     'default': {
