@@ -11,6 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class SignUpView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = []
     serializer_class = SignUpSerializer
     
     def post(self, request):
@@ -32,6 +34,8 @@ class SignUpView(GenericAPIView):
         return Response(user_data, status=status.HTTP_201_CREATED)
     
 class VerifyEmailView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = []
     serializer_class = EmailVerificationSerializer
 
     def get(self, request):
@@ -50,6 +54,8 @@ class VerifyEmailView(GenericAPIView):
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(GenericAPIView):
+    authentication_classes = []
+    permission_classes = []
     serializer_class = LoginSerializer
 
     def post(self, request):
