@@ -25,7 +25,8 @@ def create_thumbnails(video_instance):
         os.makedirs(thumbnail_folder)
 
     media_path = os.path.join(thumbnail_folder, target)
-    cmd = 'ffmpeg -ss 00:00:01.00 -i "{}" -vf "scale=320:320:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(video_1080p_source, media_path)
+    cmd = 'ffmpeg -ss 00:00:01.00 -i "{}" -vf "scale=iw:ih:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(video_1080p_source, media_path)
+    # cmd = 'ffmpeg -ss 00:00:01.00 -i "{}" -vf "scale=320:320:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(video_1080p_source, media_path)
     subprocess.run(cmd)
 
     video_instance.thumbnail_file = os.path.join('thumbnails', target)
