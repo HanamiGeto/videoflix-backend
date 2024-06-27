@@ -1,4 +1,4 @@
-from .tasks import convert_videos_to_resolutions
+from .tasks import convert_videos_to_resolutions, create_thumbnails
 from .models import Video
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
@@ -10,6 +10,7 @@ def video_post_save(sender, instance, created, **kwargs):
     if created:
         queue = django_rq.get_queue('default', autocommit=True)
         queue.enqueue(convert_videos_to_resolutions, instance.video_file.path)
+        queue.enqueue(create_thumbnails, instance)
 
 @receiver(post_delete, sender=Video)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
@@ -31,3 +32,8 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
             resolution_file_path = f'{base_name}{resolution}{extension}'
             if os.path.isfile(resolution_file_path):
                 os.remove(resolution_file_path)
+
+    if instance.thumbnail_file:
+        file_path = instance.thumbnail_file.path
+        if os.path.isfile(file_path):
+            os.remove(file_path)
