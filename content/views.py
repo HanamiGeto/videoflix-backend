@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 import os
 
-@login_required
+# @login_required
 def protected_media(request, path):
     media_path = os.path.join(settings.MEDIA_ROOT, 'videos', path)
     if os.path.exists(media_path):
@@ -24,6 +24,13 @@ class VideoList(APIView):
         videos = Video.objects.all()
         serializer = VideoSerializer(videos, many=True)
         return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = VideoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class VideoDetail(APIView):
     authentication_classes = []
