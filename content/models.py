@@ -15,6 +15,7 @@ class Video(models.Model):
         choices=GENRE
     )
     video_file = models.FileField(upload_to='videos')
+    thumbnail_file = models.FileField(upload_to='thumbnails', null=True, blank=True)
 
     def __str__(self):
         return self.title
