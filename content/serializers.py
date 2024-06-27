@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Video
+import os
 
 class VideoSerializer(serializers.ModelSerializer):
     video_file_resolutions = serializers.SerializerMethodField()
@@ -9,7 +10,8 @@ class VideoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_video_file_resolutions(self, obj):
-        resolutions = ['1080p', '720p', '360p']
+        resolutions = ['_1080p', '_720p', '_360p']
+        file_path, ext = os.path.splitext(str(obj.video_file))
         return {
-            res: f'/media/videos/{obj.title.lower()}_{res}.mp4' for res in resolutions
+            res: f'/media/{file_path}{res}{ext}' for res in resolutions
         }
