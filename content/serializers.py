@@ -4,6 +4,7 @@ import os
 
 class VideoSerializer(serializers.ModelSerializer):
     video_file_resolutions = serializers.SerializerMethodField()
+    genre_display = serializers.CharField(source='get_genre_display', read_only=True)
 
     class Meta:
         model = Video
