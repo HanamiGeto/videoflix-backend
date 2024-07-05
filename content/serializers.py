@@ -12,7 +12,25 @@ class VideoSerializer(serializers.ModelSerializer):
 
     def get_video_file_resolutions(self, obj):
         resolutions = ['_1080p', '_720p', '_360p']
-        file_path, ext = os.path.splitext(str(obj.video_file))
+        request = self.context.get('request')
+        file_path, ext = os.path.splitext(str(obj.video_file).replace('\\', '/'))
         return {
-            res: f'/media/{file_path}{res}{ext}' for res in resolutions
+            res: request.build_absolute_uri(
+                f'/media/{file_path}{res}{ext}'
+            ) for res in resolutions
         }
+    
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        representation = super().to_representation(instance)
+
+        video_file_path = instance.video_file.name.replace('\\', '/')
+        thumbnail_file_path = instance.thumbnail_file.name.replace('\\', '/') 
+
+        representation['video_file'] = request.build_absolute_uri(
+            f'/media/{video_file_path}'
+        )
+        representation['thumbnail_file'] = request.build_absolute_uri(
+            f'/media/{thumbnail_file_path}'
+        )
+        return representation
