@@ -1,3 +1,4 @@
+import os
 from rest_framework.views import APIView
 from .serializers import VideoSerializer
 from .models import Video
@@ -6,9 +7,14 @@ from rest_framework import status
 from django.http import FileResponse, HttpResponseForbidden
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-import os
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 # @login_required
+@cache_page(CACHE_TTL)
 def protected_media(request, path):
     media_path = os.path.join(settings.MEDIA_ROOT, 'videos', path)
     if os.path.exists(media_path):
@@ -19,6 +25,7 @@ def protected_media(request, path):
 class VideoList(APIView):
     authentication_classes = []
     permission_classes = []
+    @method_decorator(cache_page(CACHE_TTL))
 
     def get(self, request):
         videos = Video.objects.all()
@@ -35,6 +42,7 @@ class VideoList(APIView):
 class VideoDetail(APIView):
     authentication_classes = []
     permission_classes = []
+    @method_decorator(cache_page(CACHE_TTL))
 
     def get(self, request, pk):
         try:

@@ -2,3 +2,4 @@ env/
 *.env*
 up.bat
 media/
+rq_worker.bat
