@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'content.apps.ContentConfig',
     'debug_toolbar',
     'django_rq',
+    'import_export',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
@@ -124,6 +125,10 @@ TEMPLATES = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/staticfiles')
 
 WSGI_APPLICATION = 'videoflix.wsgi.application'
 

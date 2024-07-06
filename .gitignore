@@ -3,3 +3,4 @@ env/
 up.bat
 media/
 rq_worker.bat
+static/
