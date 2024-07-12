@@ -16,4 +16,5 @@ class Util:
         email = EmailMessage(
             subject=data['email_subject'], body=data['email_body'], to=[data['to_email']]
         )
+        email.content_subtype = "html"
         EmailThread(email).start()

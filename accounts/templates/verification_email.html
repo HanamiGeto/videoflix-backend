@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .header img {
+            width: 100px;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        p {
+            margin: 3px;
+        }
+        p:first-of-type {
+            margin-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            color: #ffffff;
+            background-color: red;
+            text-decoration: none;
+            border-radius: 5px;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- <img src="YOUR_LOGO_URL" alt="Logo"> -->
+             Videoflix
+        </div>
+        <div class="content">
+            <h1>Email Verification</h1>
+            <p>Hi {{ username }},</p>
+            <!-- <p>Thank you for registering. Please click the button below to verify your email address.</p> -->
+            <p>You’re almost ready to start enjoying Videoflix!</p>
+            <p>Simply click the big button below to verify your email address.</p>
+            <a href="{{ verification_link }}" class="button">Verify email address</a>
+        </div>
+    </div>
+</body>
+</html>

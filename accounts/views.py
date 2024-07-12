@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from .models import CustomUser
 from .serializers import LoginSerializer, SignUpSerializer, EmailVerificationSerializer
 from .utils import Util
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.template.loader import render_to_string
 
 
 class SignUpView(GenericAPIView):
@@ -26,12 +28,30 @@ class SignUpView(GenericAPIView):
         current_site = get_current_site(request).domain
         relative_link = reverse('email-verify')
         absurl = f'http://{current_site}{relative_link}?token={token}'
-        email_body = f'Hi {user.username}, use the link below to verify your email \n{absurl}'
-        email_data = {'email_body': email_body, 'to_email': user.email, 'email_subject': 'Verify your email'}
+        
+        email_context = {
+            'username': user.username,
+            'verification_link': absurl
+        }
+
+        email_body = render_to_string('verification_email.html', email_context)
+        email_data = {
+            'email_body': email_body, 
+            'to_email': user.email, 
+            'email_subject': 'Verify your email'
+        }
 
         Util.send_email(email_data)
 
         return Response(user_data, status=status.HTTP_201_CREATED)
+    
+
+def preview_email(request):
+    email_context = {
+        'username': 'JohnDoe',
+        'verification_link': 'http://example.com/verify?token=exampletoken'
+    }
+    return render(request, 'verification_email.html', email_context)
     
 class VerifyEmailView(GenericAPIView):
     authentication_classes = []
