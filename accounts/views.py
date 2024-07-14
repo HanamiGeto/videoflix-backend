@@ -6,11 +6,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 import jwt
 from .models import CustomUser
-from .serializers import LoginSerializer, SignUpSerializer, EmailVerificationSerializer
+from .serializers import CustomPasswordTokenSerializer, LoginSerializer, SignUpSerializer, EmailVerificationSerializer
 from .utils import Util
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.template.loader import render_to_string
-
+from django_rest_passwordreset.views import ResetPasswordConfirm
+from django_rest_passwordreset.models import ResetPasswordToken
 
 class SignUpView(GenericAPIView):
     authentication_classes = []
@@ -52,6 +53,13 @@ def preview_email(request):
         'verification_link': 'http://example.com/verify?token=exampletoken'
     }
     return render(request, 'verification_email.html', email_context)
+
+def preview_pw_email(request):
+    email_context = {
+        'username': 'JohnDoe',
+        'reset_password_url': 'http://example.com/verify?token=exampletoken'
+    }
+    return render(request, 'password_reset_email.html', email_context)
     
 class VerifyEmailView(GenericAPIView):
     authentication_classes = []
@@ -84,3 +92,14 @@ class LoginView(GenericAPIView):
             user_data = serializer.validated_data
             return Response(user_data, status=status.HTTP_200_OK)
         print(serializer.errors)
+
+class CustomPasswordResetConfirmView(ResetPasswordConfirm):
+    serializer_class = CustomPasswordTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            ResetPasswordToken.objects.filter(user=serializer.validated_data['user']).delete()
+            return Response({"status": "Password reset successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
