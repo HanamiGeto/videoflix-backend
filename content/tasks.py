@@ -9,8 +9,8 @@ def convert_videos_to_resolutions(source):
         '_360p': '640x360'
     }
     for key, value in resolutions.items():
-        target = source[0:len(source) - 4] + '{}.mp4'.format(key)
-        cmd = 'ffmpeg -i "{}" -s {} -c:v libx264 -crf 23 -c:a aac -strict -2 "{}"'.format(source, value, target)
+        target = source[0:len(source) - 4] + '{}.m3u8'.format(key)
+        cmd = ('ffmpeg -i "{}" -vf "scale={}" -start_number 0 -hls_time 5 -hls_list_size 0 -f hls "{}"').format(source, value, target)
         subprocess.run(cmd)
         
 def create_thumbnails(video_instance):
