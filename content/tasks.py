@@ -17,7 +17,7 @@ def create_thumbnails(video_instance):
     source = video_instance.video_file.path
     file_name, _ = os.path.splitext(source)
     base_name = os.path.basename(file_name)
-    video_1080p_source = '{}_1080p.mp4'.format(file_name)
+    video_1080p_source = '{}_1080p.m3u8'.format(file_name)
     target = '{}.jpg'.format(base_name)
     thumbnail_folder = os.path.join(settings.MEDIA_ROOT, 'thumbnails')
 
@@ -25,8 +25,23 @@ def create_thumbnails(video_instance):
         os.makedirs(thumbnail_folder)
 
     media_path = os.path.join(thumbnail_folder, target)
-    cmd = 'ffmpeg -ss 00:00:01.00 -i "{}" -vf "scale=iw:ih:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(video_1080p_source, media_path)
-    # cmd = 'ffmpeg -ss 00:00:01.00 -i "{}" -vf "scale=320:320:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(video_1080p_source, media_path)
+
+    result = subprocess.run(
+        ['ffmpeg', '-i', video_1080p_source, '-hide_banner'],
+        stderr=subprocess.PIPE,
+        universal_newlines=True
+    )
+    duration_line = [x for x in result.stderr.split('\n') if 'Duration' in x]
+    duration = duration_line[0].split(',')[0].split()[1]
+    
+    # Convert duration to seconds
+    h, m, s = duration.split(':')
+    total_seconds = int(h) * 3600 + int(m) * 60 + float(s)
+
+    # Calculate the midpoint
+    midpoint = total_seconds / 2
+
+    cmd = 'ffmpeg -ss {} -i "{}" -vf "scale=iw:ih:force_original_aspect_ratio=decrease" -vframes 1 -update 1 "{}"'.format(midpoint, video_1080p_source, media_path)
     subprocess.run(cmd)
 
     video_instance.thumbnail_file = os.path.join('thumbnails', target)
