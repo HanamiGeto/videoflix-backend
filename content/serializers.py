@@ -16,7 +16,7 @@ class VideoSerializer(serializers.ModelSerializer):
         file_path, ext = os.path.splitext(str(obj.video_file).replace('\\', '/'))
         return {
             res: request.build_absolute_uri(
-                f'/media/{file_path}{res}{ext}'
+                f'/media/{file_path}{res}.m3u8'
             ) for res in resolutions
         }
     
