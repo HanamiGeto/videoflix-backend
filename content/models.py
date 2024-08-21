@@ -1,4 +1,5 @@
 from datetime import date
+from django.conf import settings
 from django.db import models
 
 class Video(models.Model):
@@ -19,3 +20,11 @@ class Video(models.Model):
 
     def __str__(self):
         return self.title
+
+class UserVideoList(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.video.title
