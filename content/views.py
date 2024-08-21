@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from .serializers import VideoSerializer
-from .models import Video
+from .models import UserVideoList, Video
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -36,3 +36,27 @@ class VideoDetail(APIView):
         
         serializer = VideoSerializer(video, context={'request': request})
         return Response(serializer.data)
+    
+class UserVideoListView(APIView):
+
+    def get(self, request):
+        user_videos = UserVideoList.objects.filter(user=request.user)
+        videos = [user_video.video for user_video in user_videos]
+        serializer = VideoSerializer(videos, many=True, context={'request': request})
+        return Response(serializer.data)
+    
+    def patch(self, request):
+        video_id = request.data.get('id')
+        try:
+            video = Video.objects.get(pk=video_id)
+        except Video.DoesNotExist:
+            return Response({'error': 'Video not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        user_video = UserVideoList.objects.filter(user=request.user, video=video).first()
+
+        if user_video:
+            user_video.delete()
+            return Response({'status': 'Video removed from list.'}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            UserVideoList.objects.create(user=request.user, video=video)
+            return Response({'status': 'Video added to list.'}, status=status.HTTP_201_CREATED)
