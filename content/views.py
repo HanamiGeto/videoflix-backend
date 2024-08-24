@@ -14,7 +14,7 @@ class VideoList(APIView):
     @method_decorator(cache_page(CACHE_TTL))
 
     def get(self, request):
-        videos = Video.objects.all()
+        videos = Video.objects.all().order_by('id')
         serializer = VideoSerializer(videos, many=True, context={'request': request})
         return Response(serializer.data)
     
