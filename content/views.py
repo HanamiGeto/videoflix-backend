@@ -40,7 +40,7 @@ class VideoDetail(APIView):
 class UserVideoListView(APIView):
 
     def get(self, request):
-        user_videos = UserVideoList.objects.filter(user=request.user)
+        user_videos = UserVideoList.objects.filter(user=request.user).order_by('-added_at')
         videos = [user_video.video for user_video in user_videos]
         serializer = VideoSerializer(videos, many=True, context={'request': request})
         return Response(serializer.data)
